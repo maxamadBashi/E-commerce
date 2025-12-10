@@ -33,7 +33,7 @@ const AdminDashboard = () => {
             setOrders(ord.data.records || []);
             setUsers(us.data.records || []);
         } catch (e) {
-            setMessage(e.response?.data?.message || 'Failed to load admin data');
+            setMessage(e.response?.data?.message || 'Failed to  load admin data');
         } finally {
             setLoading(false);
         }
