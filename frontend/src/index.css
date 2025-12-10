@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Manrope:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: 'Manrope', sans-serif;
+  --font-display: 'Cinzel', serif;
+  --color-gold-400: #FACC15;
+  --color-gold-500: #EAB308;
+  --color-gold-600: #CA8A04;
+}
+
+@layer components {
+  .container-max {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-12;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-500 px-5 py-2.5 text-sm font-semibold tracking-wide text-white shadow-lg shadow-violet-500/30 transition duration-300 hover:-translate-y-0.5 hover:shadow-violet-500/50 focus:outline-none focus:ring-2 focus:ring-violet-200;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/70 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-violet-200 hover:text-violet-700 hover:shadow-md;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-4 py-2 text-xs font-semibold uppercase tracking-widest shadow-lg shadow-slate-900/20;
+  }
+
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-2xl border border-white/50 shadow-2xl shadow-slate-900/5;
+  }
+
+  .glass-nav {
+    @apply bg-white/80 backdrop-blur-2xl border-b border-white/60 shadow-lg shadow-slate-900/5;
+  }
+
+  .badge-soft {
+    @apply inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600;
+  }
+
+  .input-dark {
+    @apply w-full bg-black/50 border border-zinc-800 text-white p-4 focus:border-yellow-500 transition-colors text-sm tracking-wider outline-none;
+  }
+
+  .btn-gold {
+    @apply bg-gradient-to-r from-yellow-600 to-yellow-800 text-white font-bold uppercase tracking-widest hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  .gold-gradient {
+    @apply bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-700 bg-clip-text text-transparent;
+  }
+
+  .gold-border {
+    @apply border border-yellow-500/30;
+  }
+
+  .dark-card {
+    @apply bg-zinc-900/50 backdrop-blur-md border border-zinc-800 shadow-2xl;
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.7s ease forwards;
+  }
+
+  @keyframes float-soft {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float-soft 5s ease-in-out infinite;
+  }
+}

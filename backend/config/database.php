@@ -1,0 +1,30 @@
+<?php
+class Database {
+    private $host = "localhost";
+    private $db_name = "ecommerce_db";
+    private $username = "root";
+    private $password = "";
+    public $conn;
+
+    public function getConnection() {
+        $this->conn = null;
+        try {
+            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
+            $this->conn->exec("set names utf8");
+            // Enable exceptions for errors
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch(PDOException $exception) {
+            // Check if it's a "database not found" error
+            try {
+                 $conn = new PDO("mysql:host=" . $this->host, $this->username, $this->password);
+                 $conn->exec("CREATE DATABASE IF NOT EXISTS " . $this->db_name);
+                 $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
+                 $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                echo "Connection error: " . $exception->getMessage();
+            }
+        }
+        return $this->conn;
+    }
+}
+?>
