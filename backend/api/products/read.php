@@ -1,40 +1,48 @@
 <?php
 include_once '../../config/cors.php';
 include_once '../../config/database.php';
+include_once '../../utils/response.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$query = "SELECT p.id, p.title, p.price, p.description, p.image_url, c.name as category_name 
-          FROM products p 
-          LEFT JOIN categories c ON p.category_id = c.id
-          ORDER BY p.created_at DESC";
+try {
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
+    $category_id = isset($_GET['category_id']) ? $_GET['category_id'] : '';
 
-$stmt = $db->prepare($query);
-$stmt->execute();
+    $query = "SELECT p.*, c.name as category_name 
+              FROM products p 
+              LEFT JOIN categories c ON p.category_id = c.id 
+              WHERE 1=1";
 
-$num = $stmt->rowCount();
-
-if($num > 0){
-    $products_arr = array();
-    $products_arr["records"] = array();
-
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-        extract($row);
-        $product_item = array(
-            "id" => $id,
-            "title" => $title,
-            "description" => html_entity_decode($description),
-            "price" => $price,
-            "category_name" => $category_name,
-            "image_url" => $image_url
-        );
-        array_push($products_arr["records"], $product_item);
+    if (!empty($search)) {
+        $query .= " AND (p.title LIKE :search OR p.description LIKE :search)";
     }
-    http_response_code(200);
-    echo json_encode($products_arr);
-} else {
-    http_response_code(404);
-    echo json_encode(array("message" => "No products found."));
+
+    if (!empty($category_id)) {
+        $query .= " AND p.category_id = :category_id";
+    }
+
+    $query .= " ORDER BY p.created_at DESC";
+
+    $stmt = $db->prepare($query);
+
+    if (!empty($search)) {
+        $searchTerm = "%{$search}%";
+        $stmt->bindParam(':search', $searchTerm);
+    }
+
+    if (!empty($category_id)) {
+        $stmt->bindParam(':category_id', $category_id);
+    }
+
+    $stmt->execute();
+
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    json_response(["records" => $products]);
+
+} catch (PDOException $e) {
+    error_response($e->getMessage(), 500);
 }
 ?>

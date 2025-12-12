@@ -1,15 +1,60 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
-import { ArrowRight, BarChart2, PackageSearch, Users2, ShieldCheck, Loader2 } from 'lucide-react';
+import { Loader2, ShieldCheck, BarChart2, PackageSearch, Users2, TrendingUp, Circle } from 'lucide-react';
 
-const StatCard = ({ title, value, icon: Icon }) => (
-    <div className="glass-card p-6 rounded-2xl flex items-center justify-between">
-        <div>
-            <p className="text-xs uppercase tracking-widest text-slate-500">{title}</p>
-            <p className="text-3xl font-display font-bold text-slate-900 mt-2">{value}</p>
+const StatTile = ({ label, value, accent }) => (
+    <div className="bg-white rounded-xl shadow-lg shadow-slate-900/10 border border-slate-100 p-5 flex flex-col gap-2">
+        <p className="text-xs uppercase tracking-widest text-slate-400">{label}</p>
+        <div className="flex items-center gap-2">
+            <div className="text-3xl font-display font-bold text-slate-900">{value}</div>
+            <div className={`w-2 h-2 rounded-full ${accent}`}></div>
         </div>
-        {Icon && <Icon className="text-violet-600" size={28} />}
+    </div>
+);
+
+const MiniBars = () => {
+    const bars = [42, 28, 36, 55, 24, 40, 31, 44, 26];
+    return (
+        <div className="flex items-end gap-2 h-28">
+            {bars.map((h, i) => (
+                <div
+                    key={i}
+                    className="w-6 rounded-t-xl bg-gradient-to-t from-amber-400 to-violet-600 shadow-sm"
+                    style={{ height: `${h * 1.2}px` }}
+                />
+            ))}
+        </div>
+    );
+};
+
+const MiniDonut = ({ value }) => (
+    <div className="relative w-28 h-28">
+        <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+            <path
+                className="text-slate-200"
+                strokeWidth="4"
+                stroke="currentColor"
+                fill="none"
+                d="M18 2.0845
+                   a 15.9155 15.9155 0 0 1 0 31.831
+                   a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <path
+                className="text-amber-500"
+                strokeWidth="4"
+                strokeDasharray={`${value}, 100`}
+                strokeLinecap="round"
+                stroke="currentColor"
+                fill="none"
+                d="M18 2.0845
+                   a 15.9155 15.9155 0 0 1 0 31.831
+                   a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center text-xl font-display font-bold text-slate-900">
+            {value}%
+        </div>
     </div>
 );
 
@@ -33,7 +78,7 @@ const AdminDashboard = () => {
             setOrders(ord.data.records || []);
             setUsers(us.data.records || []);
         } catch (e) {
-            setMessage(e.response?.data?.message || 'Failed to  load admin data');
+            setMessage(e.response?.data?.message || 'Failed to load admin data');
         } finally {
             setLoading(false);
         }
@@ -78,158 +123,177 @@ const AdminDashboard = () => {
         );
     }
 
-    return (
-        <div className="py-16 space-y-12">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    const Sidebar = () => (
+        <div className="w-full lg:w-72 bg-gradient-to-b from-slate-900 to-slate-800 text-white rounded-3xl p-8 shadow-2xl shadow-slate-900/30">
+            <div className="flex flex-col items-center text-center space-y-3">
+                <div className="w-20 h-20 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-3xl font-bold">
+                    {user?.name?.[0]?.toUpperCase() || 'A'}
+                </div>
                 <div>
-                    <p className="text-sm uppercase tracking-widest text-violet-600 font-semibold">Admin</p>
-                    <h1 className="text-4xl font-display font-bold text-slate-900 mt-2">Control Center</h1>
-                    <p className="text-slate-500 mt-2">Welcome back, {user?.name}</p>
-                </div>
-                <div className="pill gap-2">
-                    <ShieldCheck size={18} />
-                    <span>{user?.role}</span>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Administrator</p>
+                    <p className="text-xl font-display font-bold mt-1">{user?.name}</p>
+                    <p className="text-slate-300 text-sm break-all">{user?.email}</p>
                 </div>
             </div>
 
-            {message && <div className="glass-card border border-red-200 text-red-600 px-4 py-3 rounded-xl">{message}</div>}
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard title="Total Sales" value={`$${Number(overview.total_sales || 0).toFixed(2)}`} icon={BarChart2} />
-                <StatCard title="Orders" value={orders.length} icon={PackageSearch} />
-                <StatCard title="Customers" value={users.filter(u => u.role === 'customer').length} icon={Users2} />
+            <div className="mt-10 space-y-4 text-sm">
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+                    <BarChart2 size={18} /> <span>Overview</span>
+                </div>
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+                    <PackageSearch size={18} /> <span>Orders</span>
+                </div>
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+                    <Users2 size={18} /> <span>Customers</span>
+                </div>
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+                    <ShieldCheck size={18} /> <span>Products</span>
+                </div>
             </div>
+        </div>
+    );
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                {/* Popular & Low Stock */}
-                <div className="glass-card rounded-3xl p-6 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h2 className="font-display text-2xl font-bold text-slate-900">Popular Products</h2>
-                    </div>
-                    <div className="space-y-3">
-                        {(overview.popular_products || []).map(item => (
-                            <div key={item.id} className="flex items-center justify-between bg-white/70 border border-slate-100 rounded-xl px-4 py-3">
-                                <div>
-                                    <p className="font-semibold text-slate-900">{item.title}</p>
-                                    <p className="text-xs uppercase tracking-widest text-slate-400">Qty sold: {item.qty}</p>
-                                </div>
-                                <ArrowRight className="text-slate-400" size={16} />
+    return (
+        <div className="py-10">
+            <div className="bg-slate-100/70 p-4 md:p-6 rounded-[24px] shadow-inner">
+                <div className="flex flex-col lg:flex-row gap-6">
+                    <Sidebar />
+
+                    <div className="flex-1 bg-white rounded-3xl shadow-2xl shadow-slate-900/10 border border-slate-100 p-6 space-y-6">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <p className="text-sm uppercase tracking-widest text-slate-400">Dashboard</p>
+                                <h1 className="text-3xl font-display font-bold text-slate-900 mt-1">Executive View</h1>
+                                <p className="text-slate-500">At-a-glance metrics for today’s operations.</p>
                             </div>
-                        ))}
-                        {(!overview.popular_products || overview.popular_products.length === 0) && (
-                            <p className="text-slate-500 text-sm">No sales data yet.</p>
-                        )}
-                    </div>
+                            <div className="pill bg-slate-900 text-white shadow-lg">
+                                <ShieldCheck size={18} />
+                                <span>{user?.role}</span>
+                            </div>
+                        </div>
 
-                    <div className="pt-4">
-                        <h3 className="font-display text-xl font-bold text-slate-900 mb-3">Low Stock</h3>
-                        <div className="space-y-3">
-                            {(overview.low_stock || []).map(item => (
-                                <div key={item.id} className="flex items-center justify-between bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
-                                    <p className="font-semibold text-slate-900">{item.title}</p>
-                                    <span className="text-xs uppercase tracking-widest text-amber-700">Stock: {item.stock_quantity}</span>
+                        {message && <div className="glass-card border border-red-200 text-red-600 px-4 py-3 rounded-xl">{message}</div>}
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <StatTile label="Revenue" value={`$${Number(overview.total_sales || 0).toFixed(0)}`} accent="bg-amber-500" />
+                            <StatTile label="Orders" value={orders.length} accent="bg-violet-500" />
+                            <StatTile label="Customers" value={users.filter(u => u.role === 'customer').length} accent="bg-blue-500" />
+                            <StatTile label="Conversion" value="45%" accent="bg-emerald-500" />
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-md p-5 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-display text-lg font-bold text-slate-900">Performance</h3>
+                                    <div className="text-xs uppercase tracking-widest text-slate-400">Last 9 periods</div>
                                 </div>
-                            ))}
-                            {(!overview.low_stock || overview.low_stock.length === 0) && (
-                                <p className="text-slate-500 text-sm">No low-stock alerts.</p>
-                            )}
+                                <MiniBars />
+                            </div>
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-md p-5 space-y-4 flex flex-col items-center justify-center">
+                                <h3 className="font-display text-lg font-bold text-slate-900">Health</h3>
+                                <MiniDonut value={45} />
+                                <div className="text-xs uppercase tracking-widest text-slate-400">Fulfillment score</div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-md p-5 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-display text-lg font-bold text-slate-900">Top products</h3>
+                                </div>
+                                <div className="space-y-3">
+                                    {(overview.popular_products || []).map(item => (
+                                        <div key={item.id} className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-4 py-3">
+                                            <div>
+                                                <p className="font-semibold text-slate-900">{item.title}</p>
+                                                <p className="text-xs uppercase tracking-widest text-slate-400">Units {item.qty}</p>
+                                            </div>
+                                            <TrendingUp className="text-emerald-500" size={18} />
+                                        </div>
+                                    ))}
+                                    {(!overview.popular_products || overview.popular_products.length === 0) && (
+                                        <p className="text-slate-500 text-sm">No sales data yet.</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-md p-6 space-y-4 max-w-3xl mx-auto">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-display text-lg font-bold text-slate-900">Create product</h3>
+                                </div>
+                                <form className="space-y-3" onSubmit={createProduct}>
+                                    <input className="input-dark" placeholder="Title" value={productForm.title} onChange={e => setProductForm(f => ({ ...f, title: e.target.value }))} required />
+                                    <input className="input-dark" placeholder="Price" type="number" step="0.01" value={productForm.price} onChange={e => setProductForm(f => ({ ...f, price: e.target.value }))} required />
+                                    <input className="input-dark" placeholder="Stock" type="number" value={productForm.stock_quantity} onChange={e => setProductForm(f => ({ ...f, stock_quantity: e.target.value }))} />
+                                    <input className="input-dark" placeholder="Category ID" type="number" value={productForm.category_id} onChange={e => setProductForm(f => ({ ...f, category_id: e.target.value }))} />
+                                    <input className="input-dark" placeholder="Image URL" value={productForm.image_url} onChange={e => setProductForm(f => ({ ...f, image_url: e.target.value }))} />
+                                    <button type="submit" className="w-full py-3 btn-primary justify-center">Save</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-md p-5 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-display text-lg font-bold text-slate-900">Orders</h3>
+                                    <span className="badge-soft">{orders.length} total</span>
+                                </div>
+                                <div className="space-y-3 max-h-72 overflow-auto pr-1">
+                                    {orders.map(o => (
+                                        <div key={o.id} className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-4 py-3">
+                                            <div>
+                                                <p className="font-semibold text-slate-900">Order #{o.id}</p>
+                                                <p className="text-xs uppercase tracking-widest text-slate-400">{o.customer_name || 'N/A'}</p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="badge-soft">{o.status}</span>
+                                                <div className="text-slate-900 font-bold">${Number(o.total_amount).toFixed(2)}</div>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                {['pending', 'shipped', 'delivered', 'cancelled'].map(st => (
+                                                    <button key={st} onClick={() => updateOrderStatus(o.id, st)} className="btn-ghost text-[11px] py-1 px-2">
+                                                        {st}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {orders.length === 0 && <p className="text-slate-500 text-sm">No orders yet.</p>}
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-md p-5 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-display text-lg font-bold text-slate-900">Users</h3>
+                                    <span className="badge-soft">{users.length} total</span>
+                                </div>
+                                <div className="space-y-3 max-h-72 overflow-auto pr-1">
+                                    {users.map(u => (
+                                        <div key={u.id} className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-4 py-3">
+                                            <div>
+                                                <p className="font-semibold text-slate-900">{u.name}</p>
+                                                <p className="text-xs uppercase tracking-widest text-slate-400 break-all">{u.email}</p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Circle size={10} className={u.is_blocked ? 'text-red-500' : 'text-emerald-500'} />
+                                                <span className="badge-soft">{u.role}</span>
+                                            </div>
+                                            <div>
+                                                {u.role === 'customer' && (
+                                                    u.is_blocked ? (
+                                                        <button onClick={() => blockUser(u.id, false)} className="btn-ghost text-[11px] py-1 px-3">Unblock</button>
+                                                    ) : (
+                                                        <button onClick={() => blockUser(u.id, true)} className="btn-ghost text-[11px] py-1 px-3">Block</button>
+                                                    )
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {users.length === 0 && <p className="text-slate-500 text-sm">No users found.</p>}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Quick Create Product */}
-                <div className="glass-card rounded-3xl p-6">
-                    <h2 className="font-display text-2xl font-bold text-slate-900 mb-4">Create Product</h2>
-                    <form className="space-y-4" onSubmit={createProduct}>
-                        <input className="input-dark" placeholder="Title" value={productForm.title} onChange={e => setProductForm(f => ({ ...f, title: e.target.value }))} required />
-                        <input className="input-dark" placeholder="Price" type="number" step="0.01" value={productForm.price} onChange={e => setProductForm(f => ({ ...f, price: e.target.value }))} required />
-                        <input className="input-dark" placeholder="Stock" type="number" value={productForm.stock_quantity} onChange={e => setProductForm(f => ({ ...f, stock_quantity: e.target.value }))} />
-                        <input className="input-dark" placeholder="Category ID" type="number" value={productForm.category_id} onChange={e => setProductForm(f => ({ ...f, category_id: e.target.value }))} />
-                        <input className="input-dark" placeholder="Image URL" value={productForm.image_url} onChange={e => setProductForm(f => ({ ...f, image_url: e.target.value }))} />
-                        <button type="submit" className="w-full py-3 btn-primary justify-center">Save Product</button>
-                    </form>
-                </div>
-            </div>
-
-            {/* Orders */}
-            <div className="glass-card rounded-3xl p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                    <h2 className="font-display text-2xl font-bold text-slate-900">Orders</h2>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full text-sm">
-                        <thead className="text-left text-slate-500 uppercase tracking-widest text-xs">
-                            <tr>
-                                <th className="py-2 pr-4">ID</th>
-                                <th className="py-2 pr-4">Customer</th>
-                                <th className="py-2 pr-4">Total</th>
-                                <th className="py-2 pr-4">Status</th>
-                                <th className="py-2 pr-4">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {orders.map(o => (
-                                <tr key={o.id}>
-                                    <td className="py-3 pr-4 font-semibold text-slate-900">{o.id}</td>
-                                    <td className="py-3 pr-4">{o.customer_name || 'N/A'}</td>
-                                    <td className="py-3 pr-4 font-semibold">${Number(o.total_amount).toFixed(2)}</td>
-                                    <td className="py-3 pr-4">
-                                        <span className="badge-soft">{o.status}</span>
-                                    </td>
-                                    <td className="py-3 pr-4 flex gap-2 flex-wrap">
-                                        {['pending', 'shipped', 'delivered', 'cancelled'].map(st => (
-                                            <button key={st} onClick={() => updateOrderStatus(o.id, st)} className="btn-ghost text-xs py-1 px-3">
-                                                {st}
-                                            </button>
-                                        ))}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {orders.length === 0 && <p className="text-slate-500 text-sm py-4">No orders yet.</p>}
-                </div>
-            </div>
-
-            {/* Users */}
-            <div className="glass-card rounded-3xl p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                    <h2 className="font-display text-2xl font-bold text-slate-900">Users</h2>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full text-sm">
-                        <thead className="text-left text-slate-500 uppercase tracking-widest text-xs">
-                            <tr>
-                                <th className="py-2 pr-4">Name</th>
-                                <th className="py-2 pr-4">Email</th>
-                                <th className="py-2 pr-4">Role</th>
-                                <th className="py-2 pr-4">Status</th>
-                                <th className="py-2 pr-4">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {users.map(u => (
-                                <tr key={u.id}>
-                                    <td className="py-3 pr-4 font-semibold text-slate-900">{u.name}</td>
-                                    <td className="py-3 pr-4">{u.email}</td>
-                                    <td className="py-3 pr-4">{u.role}</td>
-                                    <td className="py-3 pr-4">
-                                        <span className="badge-soft">{u.is_blocked ? 'Blocked' : 'Active'}</span>
-                                    </td>
-                                    <td className="py-3 pr-4 flex gap-2">
-                                        {u.role === 'customer' && (
-                                            u.is_blocked ? (
-                                                <button onClick={() => blockUser(u.id, false)} className="btn-ghost text-xs py-1 px-3">Unblock</button>
-                                            ) : (
-                                                <button onClick={() => blockUser(u.id, true)} className="btn-ghost text-xs py-1 px-3">Block</button>
-                                            )
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {users.length === 0 && <p className="text-slate-500 text-sm py-4">No users found.</p>}
                 </div>
             </div>
         </div>

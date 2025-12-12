@@ -16,14 +16,16 @@ if(empty($data->name)){
 }
 
 try {
-    $query = "INSERT INTO categories SET name=:name, description=:description";
+    $query = "INSERT INTO categories SET name=:name, slug=:slug";
     $stmt = $db->prepare($query);
 
     $name = htmlspecialchars(strip_tags($data->name));
-    $description = isset($data->description) ? htmlspecialchars(strip_tags($data->description)) : '';
+    // simple slug from name
+    $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+    $slug = trim($slug, '-');
 
     $stmt->bindParam(":name", $name);
-    $stmt->bindParam(":description", $description);
+    $stmt->bindParam(":slug", $slug);
 
     if($stmt->execute()){
         json_response(["message" => "Category created.", "id" => $db->lastInsertId()], 201);

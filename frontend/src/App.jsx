@@ -1,57 +1,50 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+import AdminLayout from './components/AdminLayout';
+
+// Public Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Cart from './pages/Cart';
-import AdminDashboard from './pages/AdminDashboard';
-import CustomerDashboard from './pages/CustomerDashboard';
-import ProtectedRoute from './components/ProtectedRoute';
-import { useEffect } from 'react';
+import Checkout from './pages/Checkout';
+import Profile from './pages/Profile';
 
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-}
+// Admin Pages
+import AdminDashboard from './pages/admin/Dashboard';
+import AdminProducts from './pages/admin/Products';
+import AdminCategories from './pages/admin/Categories';
+import AdminOrders from './pages/admin/Orders';
+import AdminUsers from './pages/admin/Users';
+
+// Context
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <CartProvider>
-          <ScrollToTop />
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route
-                path="/account"
-                element={
-                  <ProtectedRoute roles={['customer']}>
-                    <CustomerDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute roles={['admin']}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </Layout>
-        </CartProvider>
-      </AuthProvider>
-    </Router>
+    <AuthProvider>
+      <CartProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Layout><Home /></Layout>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/cart" element={<Layout><Cart /></Layout>} />
+          <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
+          <Route path="/profile" element={<Layout><Profile /></Layout>} />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="users" element={<AdminUsers />} />
+          </Route>
+        </Routes>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
