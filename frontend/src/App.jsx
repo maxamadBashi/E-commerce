@@ -25,24 +25,28 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Layout><Home /></Layout>} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/cart" element={<Layout><Cart /></Layout>} />
-          <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
-          <Route path="/profile" element={<Layout><Profile /></Layout>} />
+        <WishlistProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Layout><Home /></Layout>} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/cart" element={<Layout><Cart /></Layout>} />
+            <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
+            <Route path="/profile" element={<Layout><Profile /></Layout>} />
+            <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
+            <Route path="/product/:id" element={<ProductDetails />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="products" element={<AdminProducts />} />
-            <Route path="categories" element={<AdminCategories />} />
-            <Route path="orders" element={<AdminOrders />} />
-            <Route path="users" element={<AdminUsers />} />
-          </Route>
-        </Routes>
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="users" element={<AdminUsers />} />
+            </Route>
+          </Routes>
+        </WishlistProvider>
       </CartProvider>
     </AuthProvider>
   );

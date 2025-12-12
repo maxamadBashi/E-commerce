@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useState } from 'react';
+import { Lock } from 'lucide-react';
 
 const Checkout = () => {
     const { cart, cartTotal, clearCart } = useCart();
@@ -92,9 +93,9 @@ const Checkout = () => {
                         <button
                             onClick={handlePlaceOrder}
                             disabled={loading}
-                            className="w-full btn-primary py-4 text-lg shadow-xl shadow-violet-500/20"
+                            className="w-full btn-primary py-4 text-lg shadow-xl shadow-violet-500/20 flex items-center justify-center gap-2"
                         >
-                            {loading ? 'Processing...' : 'Checkout Securely'}
+                            {loading ? 'Processing...' : <><Lock size={20} /> Checkout Securely</>}
                         </button>
                     </div>
                 </div>

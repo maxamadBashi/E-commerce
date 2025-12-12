@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { ShoppingCart, Menu, X, User, LogOut, LayoutDashboard, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { user, logout } = useAuth();
     const { cartCount } = useCart();
+    const { wishlist } = useWishlist();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,8 +32,8 @@ const Navbar = () => {
             <div className="container-max">
                 <nav
                     className={`mx-auto rounded-full transition-all duration-300 px-6 py-3 flex items-center justify-between ${scrolled
-                            ? 'bg-white/80 backdrop-blur-md shadow-lg shadow-slate-900/5 hover:bg-white/90 border border-white/50'
-                            : 'bg-transparent'
+                        ? 'bg-white/80 backdrop-blur-md shadow-lg shadow-slate-900/5 hover:bg-white/90 border border-white/50'
+                        : 'bg-transparent'
                         }`}
                 >
                     {/* Logo */}
@@ -50,8 +52,18 @@ const Navbar = () => {
                         )}
                     </div>
 
+
                     {/* Actions */}
                     <div className="hidden md:flex items-center gap-4">
+                        <Link to="/wishlist" className="relative p-2 text-slate-800 hover:text-rose-500 transition">
+                            <Heart size={22} className={wishlist.length > 0 ? "fill-rose-500 text-rose-500" : ""} />
+                            {wishlist.length > 0 && (
+                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full animate-bounce">
+                                    {wishlist.length}
+                                </span>
+                            )}
+                        </Link>
+
                         <Link to="/cart" className="relative p-2 text-slate-800 hover:text-violet-600 transition">
                             <ShoppingCart size={22} />
                             {cartCount > 0 && (

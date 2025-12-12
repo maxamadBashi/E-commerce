@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useCart } from '../context/CartContext';
-import { ShoppingBag, ArrowLeft, Truck, ShieldCheck, Check, Star } from 'lucide-react';
+import { useWishlist } from '../context/WishlistContext';
+import { ShoppingBag, ArrowLeft, Truck, ShieldCheck, Check, Star, Heart } from 'lucide-react';
 
 const ProductDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { addToCart } = useCart();
+    const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
